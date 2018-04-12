@@ -1,64 +1,82 @@
 import { SidraService } from "../services/SidraService";
-import { SidraResearch } from "../interfaces/SidraResearch";
+import { SidraResearch } from "../types/SidraResearch";
 import { Listenable } from "../shared/Listenable";
+import { isNumber } from "../helpers/isNumber";
 
+const EVENTS = {
+    ON_CHANGE: 'onChange'
+}
 export class ResearchesList extends Listenable {
-    private _states = {
-        initialized: false,
-        list: [] as SidraResearch[]
+    private _list = {
+        full: [] as SidraResearch[],
+        filtered: [] as SidraResearch[],
+        term: ''
     }
-
-    private _EVENTS = {
-        INIT: 'init',
-        LIST: {
-            UPDATED: "list:updated"
-        }
-    }
-
-    protected _events = { 
-        [this._EVENTS.INIT]: [], 
-        [this._EVENTS.LIST.UPDATED]: [] 
-    };
 
     public get list() {
-        return this._states.list.slice(0);
+        return this._list.filtered.slice(0);
+    }
+
+    protected _events = {
+        [EVENTS.ON_CHANGE]: []
     }
 
     constructor(
-        private _sidraService: SidraService
+        list: SidraResearch[]
     ) {
         super();
-        this._sidraService.getListPesquisas()
-            .then(list => {
-                this._initialize()
-                this.updateList(list)
-            })
+        this.registerList(list);
     }
 
-    getResearch(researchId: string) {
-        return this._states.list.find(obj => obj.id === researchId);
+    filterList(term: string) {
+        debugger; 
+        console.log(term);
+        this._list.term = term;
+
+        const filterFn = isNumber(term) 
+            ? this._filterTablesById(parseInt(term, 10))
+            : this._filterTablesByStr(term);
+        
+        this._list.filtered = this._list.full.reduce(filterFn, [] as SidraResearch[]);
+        this.trigger(EVENTS.ON_CHANGE, this._list.filtered)
+        
+        return this._list.filtered;
     }
 
-    getTable(tableId: number|string) {
-        const _id = tableId.toString();
-        let res = null;
-        for (let idx = 0, len = this._states.list.length; idx < len; idx++) {
-            const obj = this._states.list[idx];
-            res = obj.agregados.find(item => item.id === _id);
-            if (res) {
-                break;
+    public registerList(list: SidraResearch[]) {
+        this._list.full = list;
+        this.filterList(this._list.term);
+    }
+
+    private _filterTablesByStr(str: string) {
+        return function (arr: SidraResearch[], research: SidraResearch) {
+            const tables = research.filterTables(str);
+
+            if (tables.length > 0) {
+                arr.push(new SidraResearch({
+                    id: research.id,
+                    name: research.name,
+                    tables: tables
+                }));
             }
+
+            return arr;
         }
-        return res;
     }
 
-    updateList(list: SidraResearch[]) {
-        this._states.list = list;
-        this.trigger(this._EVENTS.LIST.UPDATED, list)
-    }
+    private _filterTablesById(id: number) {
+        return function (arr: SidraResearch[], research: SidraResearch) {
+            const table = research.getTable(id);
+            
+            if (table) {
+                arr.push(new SidraResearch({
+                    id: research.id,
+                    name: research.name,
+                    tables: [table]
+                }))
+            }
 
-    private _initialize() {
-        this._states.initialized = true;
-        this.trigger(this._EVENTS.INIT);
+            return arr;
+        }
     }
 }

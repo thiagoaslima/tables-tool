@@ -1,5 +1,5 @@
 import { RequestService, requestService } from './RequestService';
-import { SidraResearch } from '../interfaces/SidraResearch';
+import { SidraResearch } from '../types/SidraResearch';
 
 export class SidraService {
     private _baseUrl = "https://servicodados.ibge.gov.br/api/v3/agregados";
@@ -10,6 +10,7 @@ export class SidraService {
 
     getListPesquisas(): Promise<SidraResearch[]> {
         return this._requestService.getJSON(this._baseUrl)
+            .then(response => response.map(obj => new SidraResearch(SidraResearch.convert(obj))))
             .catch(err => {
                 err.message = "Não foi possível acessar a lista de pesquisas do Sidra.\nErro original:\n" + err.message;
                 throw err;

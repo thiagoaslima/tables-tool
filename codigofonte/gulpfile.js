@@ -1,22 +1,22 @@
 const babelify = require('babelify');
 const browserify = require('browserify');
-var buffer = require('vinyl-buffer');
+const buffer = require('vinyl-buffer');
 const CacheBuster = require("gulp-cachebust");
 const concat = require("gulp-concat")
 const debug = require("gulp-debug");
 const del = require("del");
 const gulp = require("gulp");
-var runSequence = require('run-sequence');
-var source = require('vinyl-source-stream');
-var ts = require("gulp-typescript");
-var tsProject = ts.createProject("tsconfig.json");
+const runSequence = require('run-sequence');
+const source = require('vinyl-source-stream');
+const ts = require("gulp-typescript");
+const tsProject = ts.createProject("tsconfig.json");
 const uglify = require('gulp-uglify');
 
 
 const cachebust = new CacheBuster();
 
 gulp.task('clean', function () {
-    return del(['../dist/**', '!../dist'], { force: true });
+    return del(['../dist/**', '!../dist', './src/es6', './src/js-format'], { force: true });
 });
 
 gulp.task('copy-html', function () {
@@ -44,9 +44,9 @@ gulp.task('copy-polyfills', function () {
         "./node_modules/es5-shim/es5-shim.min.js",
         "./node_modules/es6-shim/es6-shim.min.js"
     ])
-    .pipe(concat('polyfills.js'))
-    .pipe(uglify())
-    .pipe(gulp.dest('../dist/js/'))
+        .pipe(concat('polyfills.js'))
+        .pipe(uglify())
+        .pipe(gulp.dest('../dist/js/'))
 })
 
 gulp.task('copy-js', function () {

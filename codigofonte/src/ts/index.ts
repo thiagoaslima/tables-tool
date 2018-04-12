@@ -1,7 +1,9 @@
-import { ResearchesView } from './researches/ResearchesView';
 import { ResearchesList } from './researches/ResearchesList';
 import { sidraService } from './services/SidraService';
 
-const researchesList = new ResearchesList(sidraService);
-const view = new ResearchesView(document.querySelector('#research-view'), researchesList);
-window['view'] = view
+const researchesList = sidraService.getListPesquisas().then(researches => new ResearchesList(researches))
+
+researchesList.then(obj => {
+    let filter = obj.filterList('teste')
+    console.log(filter);
+});
