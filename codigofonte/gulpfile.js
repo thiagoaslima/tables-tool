@@ -65,7 +65,7 @@ gulp.task('ts->es6', function () {
 gulp.task('es6->js', function () {
     return browserify({
         entries: ['./src/es6/index.js'],
-        debug: true
+        // debug: true
     })
         .transform(babelify.configure({
             presets: [
@@ -79,7 +79,7 @@ gulp.task('es6->js', function () {
                     }
                 }]
             ],
-            sourceMaps: true,
+            sourceMaps: false,
             sourceMapsAbsolute: true
         }))
         .bundle()

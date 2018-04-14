@@ -1,8 +1,4 @@
 export class SidraResearch {
-    public readonly id: string;
-    public readonly name: string;
-    public readonly tables: Array<{ readonly id: number, readonly name: string }>
-
     static convert(params: {
         id: string,
         nome: string,
@@ -14,6 +10,11 @@ export class SidraResearch {
             tables: params.agregados.map(({ id, nome }) => ({ id: parseInt(id, 10), name: nome }))
         }
     } 
+
+    public readonly id: string;
+    public readonly name: string;
+    public readonly tables: Array<{ readonly id: number, readonly name: string }>
+
 
     constructor(params: {id: string, name: string, tables: Array<{ id: number, name: string }>}) {
         this.id = params.id;

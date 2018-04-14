@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "prestart": "npm run build",
-    "start": "http-server ../dist -o -c -1",
+    "start": "npx http-server ../dist -o -c -1",
     "w": "gulp watch",
     "build": "gulp build",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -31,6 +31,7 @@
     "gulp-debug": "^3.2.0",
     "gulp-typescript": "^4.0.2",
     "gulp-uglify": "^3.0.0",
+    "http-server": "^0.11.1",
     "run-sequence": "^2.2.1",
     "ts-node": "^5.0.1",
     "typescript": "^2.8.1",

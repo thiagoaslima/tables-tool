@@ -1,24 +1,25 @@
 import { SidraService } from "../services/SidraService";
-import { SidraResearch } from "../types/SidraResearch";
+import { SidraResearch } from "./SidraResearch";
 import { Listenable } from "../shared/Listenable";
 import { isNumber } from "../helpers/isNumber";
 
-const EVENTS = {
-    ON_CHANGE: 'onChange'
-}
 export class ResearchesList extends Listenable {
+    static EVENTS = {
+        ON_CHANGE: 'onChange'
+    }
+
     private _list = {
         full: [] as SidraResearch[],
         filtered: [] as SidraResearch[],
         term: ''
     }
 
-    public get list() {
-        return this._list.filtered.slice(0);
+    protected _events = {
+        [ResearchesList.EVENTS.ON_CHANGE]: []
     }
 
-    protected _events = {
-        [EVENTS.ON_CHANGE]: []
+    public get list() {
+        return this._list.filtered.slice(0);
     }
 
     constructor(
@@ -29,17 +30,19 @@ export class ResearchesList extends Listenable {
     }
 
     filterList(term: string) {
-        debugger; 
-        console.log(term);
         this._list.term = term;
 
-        const filterFn = isNumber(term) 
-            ? this._filterTablesById(parseInt(term, 10))
-            : this._filterTablesByStr(term);
-        
-        this._list.filtered = this._list.full.reduce(filterFn, [] as SidraResearch[]);
-        this.trigger(EVENTS.ON_CHANGE, this._list.filtered)
-        
+        if (term) {
+            const filterFn = isNumber(term) 
+                ? this._filterTablesById(parseInt(term, 10))
+                : this._filterTablesByStr(term);
+            
+            this._list.filtered = this._list.full.reduce(filterFn, [] as SidraResearch[]);
+        }  else {
+            this._list.filtered = this.list;
+        }
+
+        this._emit(ResearchesList.EVENTS.ON_CHANGE);
         return this._list.filtered;
     }
 
@@ -77,6 +80,12 @@ export class ResearchesList extends Listenable {
             }
 
             return arr;
+        }
+    }
+
+    private _emit(eventName: string) {
+        if (this._events[eventName]) {
+            this.trigger(eventName, this)
         }
     }
 }
