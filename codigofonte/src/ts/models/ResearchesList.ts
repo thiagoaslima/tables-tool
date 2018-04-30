@@ -33,13 +33,9 @@ export class ResearchesList extends Listenable {
         this._list.term = term;
 
         if (term) {
-            const filterFn = isNumber(term) 
-                ? this._filterTablesById(parseInt(term, 10))
-                : this._filterTablesByStr(term);
-            
-            this._list.filtered = this._list.full.reduce(filterFn, [] as SidraResearch[]);
-        }  else {
-            this._list.filtered = this.list;
+            this._list.filtered = this._list.full.reduce(this._filterTables(term), [] as SidraResearch[]);
+        } else {
+            this._list.filtered = this._list.full;
         }
 
         this._emit(ResearchesList.EVENTS.ON_CHANGE);
@@ -51,36 +47,20 @@ export class ResearchesList extends Listenable {
         this.filterList(this._list.term);
     }
 
-    private _filterTablesByStr(str: string) {
+    private _filterTables(term: string) {
         return function (arr: SidraResearch[], research: SidraResearch) {
-            const tables = research.filterTables(str);
+            const tables = isNumber(term) ? [research.getTable(parseInt(term, 10))] : research.filterTables(term);
 
             if (tables.length > 0) {
-                arr.push(new SidraResearch({
-                    id: research.id,
-                    name: research.name,
-                    tables: tables
-                }));
+                arr.push(this._sidraResearchFactory(research, tables));
             }
 
             return arr;
         }
     }
 
-    private _filterTablesById(id: number) {
-        return function (arr: SidraResearch[], research: SidraResearch) {
-            const table = research.getTable(id);
-            
-            if (table) {
-                arr.push(new SidraResearch({
-                    id: research.id,
-                    name: research.name,
-                    tables: [table]
-                }))
-            }
-
-            return arr;
-        }
+    private _sidraResearchFactory(baseResearch, tables) {
+        return new SidraResearch(Object.assign({}, baseResearch, { tables }));
     }
 
     private _emit(eventName: string) {
