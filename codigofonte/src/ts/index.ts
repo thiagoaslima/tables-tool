@@ -1,9 +1,55 @@
-import { SidraResearchView } from './views/SidraResearchView';
-import { sidraService } from './services/SidraService';
-import { ResearchesList } from './models/ResearchesList';
-import { ResearchesListView } from './views/ResearchesListView';
-import { ResearchesListController } from './controllers/ResearchesListController';
+import { elementsDefine } from "./helpers/elements-define";
 
-const researchesList = sidraService.getListPesquisas().then(researches => new ResearchesList(researches))
-const researchesListView = new ResearchesListView(document.querySelector("[research-view-respostas]"), SidraResearchView);
-const researchesListController = researchesList.then(researchesList => new ResearchesListController(researchesList, researchesListView));
+class AppDrawer extends HTMLElement {
+
+    // A getter/setter for an open property.
+    get open() {
+      return this.hasAttribute('open');
+    }
+  
+    set open(val) {
+      // Reflect the value of the open property as an HTML attribute.
+      if (val) {
+        this.setAttribute('open', '');
+      } else {
+        this.removeAttribute('open');
+      }
+      this.toggleDrawer();
+    }
+  
+    // A getter/setter for a disabled property.
+    get disabled() {
+      return this.hasAttribute('disabled');
+    }
+  
+    set disabled(val) {
+      // Reflect the value of the disabled property as an HTML attribute.
+      if (val) {
+        this.setAttribute('disabled', '');
+      } else {
+        this.removeAttribute('disabled');
+      }
+    }
+  
+    // Can define constructor arguments if you wish.
+    constructor() {
+      // If you define a ctor, always call super() first!
+      // This is specific to CE and required by the spec.
+      super();
+  
+      // Setup a click listener on <app-drawer> itself.
+      this.addEventListener('click', e => {
+        // Don't toggle the drawer if it's disabled.
+        if (this.disabled) {
+          return;
+        }
+        this.toggleDrawer();
+      });
+    }
+  
+    toggleDrawer() {
+
+    }
+  }
+  
+  elementsDefine('app-drawer', AppDrawer);

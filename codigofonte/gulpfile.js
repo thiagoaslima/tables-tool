@@ -40,9 +40,9 @@ gulp.task('copy-static', function () {
 
 gulp.task('copy-polyfills', function () {
     return gulp.src([
-        "./src/polyfills/*",
         "./node_modules/es5-shim/es5-shim.min.js",
-        "./node_modules/es6-shim/es6-shim.min.js"
+        "./node_modules/es6-shim/es6-shim.min.js",
+        "./src/polyfills/*"
     ])
         .pipe(concat('polyfills.js'))
         .pipe(uglify())
@@ -56,7 +56,7 @@ gulp.task('copy-js', function () {
 })
 
 gulp.task('ts->es6', function () {
-    return gulp.src('src/ts/**/*.ts')
+    return gulp.src(['src/ts/**/*.ts', '!node_modules/**/*'])
         .pipe(debug())
         .pipe(tsProject())
         .pipe(gulp.dest("src/es6/"));
@@ -68,13 +68,14 @@ gulp.task('es6->js', function () {
         // debug: true
     })
         .transform(babelify.configure({
+            plugins: [
+                "transform-custom-element-classes"
+            ],
             presets: [
                 ["env", {
                     "targets": {
                         "browsers": [
-                            "last 3 versions",
-                            "safari >= 7",
-                            "ie >= 9"
+                            "last 1 versions"
                         ]
                     }
                 }]

@@ -1,5 +1,5 @@
 export function debounce(fn: Function, timeout = 200) {
-    let timerId: number;
+    let timerId: NodeJS.Timer;
 
     return (...args) => {
         if (timerId) clearInterval(timerId);

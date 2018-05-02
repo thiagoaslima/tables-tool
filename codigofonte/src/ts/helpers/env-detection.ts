@@ -1,7 +1,7 @@
-const environment = ((global) => ({
-    isBrowser: Object.prototype.toString.call(typeof global !== 'undefined' ? global : 0).toLowerCase() === '[object window]',
+const environment = (() => ({
+    isBrowser: Object.prototype.toString.call(typeof window !== 'undefined' ? window : 0).toLowerCase() === '[object window]',
     isNode: Object.prototype.toString.call(typeof process !== 'undefined' ? process : 0).toLowerCase() === '[object process]',
-    isWebWorker: global.document === undefined && typeof postMessage === 'function',
+    isWebWorker: document === undefined && typeof postMessage === 'function',
     getEnvironment: () => {
         return this.isBrowser ? 'browser' : (
             this.isNode ? 'node' : (
@@ -9,7 +9,8 @@ const environment = ((global) => ({
             )
         );
     }
-}))(this);
+    
+}))();
 
 const isBrowser = environment.isBrowser;
 const isNode = environment.isNode;
