@@ -1,5 +1,5 @@
 import { SidraService } from "../services/SidraService";
-import { SidraResearch } from "./SidraResearch";
+import { SidraResearch } from "../sidraResearch/SidraResearch";
 import { Listenable } from "../shared/Listenable";
 import { isNumber } from "../helpers/isNumber";
 

@@ -8,6 +8,7 @@ const del = require("del");
 const gulp = require("gulp");
 const runSequence = require('run-sequence');
 const source = require('vinyl-source-stream');
+const sourcemaps = require('gulp-sourcemaps');
 const ts = require("gulp-typescript");
 const tsProject = ts.createProject("tsconfig.json");
 const uglify = require('gulp-uglify');
@@ -58,14 +59,16 @@ gulp.task('copy-js', function () {
 gulp.task('ts->es6', function () {
     return gulp.src(['src/ts/**/*.ts', '!node_modules/**/*'])
         .pipe(debug())
+        .pipe(sourcemaps.init({loadMaps: true}))
         .pipe(tsProject())
+        .pipe(sourcemaps.write('.', { sourceRoot: './', includeContent: false }))
         .pipe(gulp.dest("src/es6/"));
 })
 
 gulp.task('es6->js', function () {
     return browserify({
         entries: ['./src/es6/index.js'],
-        // debug: true
+        debug: true
     })
         .transform(babelify.configure({
             plugins: [
@@ -80,13 +83,15 @@ gulp.task('es6->js', function () {
                     }
                 }]
             ],
-            sourceMaps: false,
+            sourceMaps: true,
             sourceMapsAbsolute: true
         }))
         .bundle()
         .pipe(source('index.js'))
         .pipe(buffer())
+        .pipe(sourcemaps.init({loadMaps: true}))
         // .pipe(uglify())
+        .pipe(sourcemaps.write('.', { sourceRoot: './', includeContent: false }))
         .pipe(gulp.dest('src/js-format'))
 })
 

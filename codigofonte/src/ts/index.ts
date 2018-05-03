@@ -1,5 +1,14 @@
 import { elementsDefine } from "./helpers/elements-define";
+import { sidraService } from "./services/SidraService";
+import { SidraResearchElement } from  './sidraResearch/sidraResearchElement';
 
+elementsDefine('sidra-research', SidraResearchElement);
+
+sidraService.getListPesquisas().then(pesquisas => {
+  const pesquisa = pesquisas[0];
+  document.querySelector('sidra-research').setAttribute('item', JSON.stringify(pesquisa));
+});
+/*
 class AppDrawer extends HTMLElement {
 
     // A getter/setter for an open property.
@@ -53,3 +62,4 @@ class AppDrawer extends HTMLElement {
   }
   
   elementsDefine('app-drawer', AppDrawer);
+  */

@@ -1,5 +1,5 @@
 import { RequestService, requestService } from './RequestService';
-import { SidraResearch } from '../models/SidraResearch';
+import { SidraResearch } from '../sidraResearch/SidraResearch';
 
 export class SidraService {
     private _baseUrl = "https://servicodados.ibge.gov.br/api/v3/agregados";

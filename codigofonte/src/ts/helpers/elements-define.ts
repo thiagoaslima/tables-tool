@@ -1,5 +1,15 @@
 import { isBrowser } from "./env-detection";
 
+const supportsCustomElementsV1 = 'customElements' in window;
+
+// let originalFn = supportsCustomElementsV1 ? customElements.define.bind(window) : () => {};
+
+if (supportsCustomElementsV1) {
+    // customElements.define = function(...args) {
+    //     console.warn("Don't use customElements.define directly. Instead, use elementsDefine");
+    //     return originalFn(args);
+    // }
+}
 const elementsDefine = (() => {
     let docReady = false;
     let elements = {} as { [tagName: string]: { tagName: string, constructor: Function, options: ElementDefinitionOptions } };
@@ -10,7 +20,7 @@ const elementsDefine = (() => {
         elements = {};
     };
     return (tagName: string, constructor: Function, options?: ElementDefinitionOptions) => {
-        if (isBrowser && !docReady) {
+        if (!docReady) {
             document.addEventListener('DOMContentLoaded', domHandler);
             updateElements({ tagName, constructor, options }, elements);
         } else {
