@@ -1,6 +1,5 @@
 import { elementsDefine } from "../helpers/elements-define";
-import { SidraResearch } from "./SidraResearch";
-import { latinize } from "../helpers/latinize";
+import { SidraResearch } from "./index";
 
 enum attributes {
   item = 'item',
@@ -14,11 +13,12 @@ export class SidraResearchElement extends HTMLElement {
   private _tableId: number;
   private _researchId: number;
   private _showWithoutTables = false;
-
-  private _dom: {
+ 
+  private _dom = {} as {
+    host: SidraResearchElement,
     researchTitle: HTMLHeadingElement,
     tablesList: HTMLUListElement,
-    tables: { tableContainer: HTMLLIElement, tableId: HTMLSpanElement, tableTitle: HTMLHeadingElement }[]
+    tables: { tableContainer: HTMLLIElement, tableId: HTMLParagraphElement, tableTitle: HTMLParagraphElement }[]
   };
 
   static get observedAttributes() {
@@ -30,9 +30,11 @@ export class SidraResearchElement extends HTMLElement {
   }
 
   set research(research: SidraResearch) {
+    this.updateDOM(this._internalResearch, research);
+
     this._internalResearch = research;
     this._research = research;
-    
+
     // Reflect the value of the open property as an HTML attribute.
     if (research) {
       this.setAttribute('hasResearch', 'true');
@@ -45,7 +47,6 @@ export class SidraResearchElement extends HTMLElement {
     } else if (this._filterText) {
       this.filterByText(this._filterText);
     }
-
   }
 
   get filterText() {
@@ -60,22 +61,20 @@ export class SidraResearchElement extends HTMLElement {
     return !!this._research;
   }
 
-  // Can define constructor arguments if you wish.
   constructor() {
-    // If you define a ctor, always call super() first!
-    // This is specific to CE and required by the spec.
-    super();
-    debugger;
+    super(); 
+    this._dom.host = this.previousSibling.nextSibling as SidraResearchElement;
+    console.log('ctor1');
+    this.createDOM();
+    console.log('ctor2');
   }
 
   attributeChangedCallback(attr, oldValue, newValue) {
     if (oldValue === newValue) return;
-    debugger;
+
     switch (attr) {
       case attributes.item:
         this.research = JSON.parse(newValue);
-        this.createDOM();
-        this.createTables();
     }
   }
 
@@ -98,34 +97,30 @@ export class SidraResearchElement extends HTMLElement {
   }
 
   createDOM() {
-    const researchTitle = document.createElement('h2');
+    const researchTitle = document.createElement('h3');
     researchTitle.className = 'sidra-research__research-title';
-    researchTitle.innerText = this.research.name;
 
     const tablesList = document.createElement('ul');
     tablesList.className = 'sidra-research__tables-list-container';
 
-    const self = this.previousSibling.nextSibling;
-    self.appendChild(researchTitle);
-    self.appendChild(tablesList);
+    this._dom.host.appendChild(researchTitle);
+    this._dom.host.appendChild(tablesList);
 
-    this._dom = {
-      researchTitle,
-      tablesList,
-      tables: []
-    }
+    this._dom.researchTitle = researchTitle;
+    this._dom.tablesList = tablesList;
+    this._dom.tables = [];
   }
-
   createTables() {
     this._dom.tables = this._research.tables.map(table => {
       const tableContainer = document.createElement('li');
       tableContainer.className = 'sidra-research__table-container';
-      
-      const tableId = document.createElement('span');
+      tableContainer.setAttribute('table-id', table.id.toString());
+
+      const tableId = document.createElement('p');
       tableId.className = 'sidra-research__table-id';
       tableId.innerText = table.id.toString(10);
 
-      const tableTitle = document.createElement('h3');
+      const tableTitle = document.createElement('p');
       tableTitle.className = 'sidra-research__table-title';
 
       const title = document.createTextNode(table.name);
@@ -133,7 +128,7 @@ export class SidraResearchElement extends HTMLElement {
       tableTitle.appendChild(title);
 
       tableContainer.appendChild(tableTitle);
-      
+
       return {
         tableContainer,
         tableId,
@@ -142,6 +137,28 @@ export class SidraResearchElement extends HTMLElement {
     });
 
     this._dom.tables.forEach(tableDom => this._dom.tablesList.appendChild(tableDom.tableContainer));
+  }
+
+  updateDOM(oldValue: SidraResearch, newValue: SidraResearch) {
+    if (!oldValue && newValue) {
+      this._dom.researchTitle.innerText = newValue.name;
+    }
+
+    if (!newValue && oldValue) {
+      this._dom.researchTitle.innerText = '';
+    }
+
+    if (newValue.name !== oldValue.name) {
+      this._dom.researchTitle.innerText = newValue.name;
+    }
+
+    const oldTables = oldValue ? oldValue.tables : [];
+    const newTables = newValue ? newValue.tables : [];
+
+  }
+
+  private manageTablesDOM(oldValue, newValue) {
+
   }
 
 }

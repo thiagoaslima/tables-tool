@@ -1,5 +1,5 @@
 import { SidraResearchView } from './../views/SidraResearchView';
-import { SidraResearch } from './../models/SidraResearch';
+import { SidraResearch } from '../sidraResearch/SidraResearch';
 
 export class SidraResearchController {
     private _updateView: Function

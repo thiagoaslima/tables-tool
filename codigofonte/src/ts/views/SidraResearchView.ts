@@ -1,6 +1,6 @@
-import { SidraResearch } from './../models/SidraResearch';
+import { SidraResearch } from '../sidraResearch/SidraResearch';
 import { View } from './View.interface';
-
+ 
 export class SidraResearchView implements View {
 
     constructor(

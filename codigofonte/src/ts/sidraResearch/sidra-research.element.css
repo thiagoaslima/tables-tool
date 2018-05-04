@@ -1,0 +1,9 @@
+.sidra-element__table-container {
+    display: flex;
+    flex-flow: row;
+    align-items: flex-start;
+}
+
+.sidra-research__table-id {
+    margin-right: 10px;
+} 

@@ -1,6 +1,7 @@
 import { latinize } from "../helpers/latinize";
+import { ISidraResearch } from "./SidraResearch.interface";
 
-export class SidraResearch {
+export class SidraResearch implements ISidraResearch.Instance {
     static convert(params: {
         id: string,
         nome: string,
@@ -9,8 +10,8 @@ export class SidraResearch {
         return {
             id: params.id,
             name: params.nome,
-            alteredName: SidraResearch.alterName(params.nome),
-            tables: params.agregados.map(({ id, nome }) => ({ id: parseInt(id, 10), name: nome, alteredName: SidraResearch.alterName(nome) }))
+            alias: SidraResearch.alterName(params.nome),
+            tables: params.agregados.map(({ id, nome }) => ({ id: parseInt(id, 10), name: nome, alias: SidraResearch.alterName(nome) }))
         }
     }
 
@@ -20,13 +21,13 @@ export class SidraResearch {
 
     public readonly id: string;
     public readonly name: string;
-    public readonly alteredName: string;
-    public readonly tables: Array<{ readonly id: number, readonly name: string, readonly alteredName: string }>
+    public readonly alias: string;
+    public readonly tables: Array<{ readonly id: number, readonly name: string, readonly alias: string }>
 
-    constructor(params: { id: string, name: string, alteredName: string, tables: Array<{ id: number, name: string, alteredName: string }> }) {
+    constructor(params: { id: string, name: string, alias: string, tables: Array<{ id: number, name: string, alias: string }> }) {
         this.id = params.id;
         this.name = params.name;
-        this.alteredName = params.alteredName;
+        this.alias = params.alias;
         this.tables = params.tables;
 
         this.tables.forEach(Object.freeze);
@@ -35,7 +36,7 @@ export class SidraResearch {
 
     filterTables(term: string) {
         const _term = SidraResearch.alterName(term);
-        return this.tables.filter(table => table.alteredName.includes(_term));
+        return this.tables.filter(table => table.alias.includes(_term));
     }
 
     getTable(id: number) {

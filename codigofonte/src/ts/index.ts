@@ -1,6 +1,6 @@
 import { elementsDefine } from "./helpers/elements-define";
 import { sidraService } from "./services/SidraService";
-import { SidraResearchElement } from  './sidraResearch/sidraResearchElement';
+import { SidraResearchElement } from  './sidraResearch/sidra-research.element';
 
 elementsDefine('sidra-research', SidraResearchElement);
 
