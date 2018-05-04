@@ -1,5 +1,5 @@
 import { SidraService } from "../services/SidraService";
-import { SidraResearch } from "../sidraResearch/SidraResearch";
+import { ISidraResearch, SidraResearch } from "../sidraResearch/index";
 import { Listenable } from "../shared/Listenable";
 import { isNumber } from "../helpers/isNumber";
 
@@ -9,8 +9,8 @@ export class ResearchesList extends Listenable {
     }
 
     private _list = {
-        full: [] as SidraResearch[],
-        filtered: [] as SidraResearch[],
+        full: [] as ISidraResearch.Instance[],
+        filtered: [] as ISidraResearch.Instance[],
         term: ''
     }
 
@@ -23,7 +23,7 @@ export class ResearchesList extends Listenable {
     }
 
     constructor(
-        list: SidraResearch[]
+        list: ISidraResearch.Instance[]
     ) {
         super();
         this.registerList(list);
@@ -42,13 +42,13 @@ export class ResearchesList extends Listenable {
         return this._list.filtered;
     }
 
-    public registerList(list: SidraResearch[]) {
+    public registerList(list: ISidraResearch.Instance[]) {
         this._list.full = list;
         this.filterList(this._list.term);
     }
 
     private _filterTables(term: string) {
-        return function (arr: SidraResearch[], research: SidraResearch) {
+        return function (arr: ISidraResearch.Instance[], research: ISidraResearch.Instance) {
             const tables = isNumber(term) ? [research.getTable(parseInt(term, 10))] : research.filterTables(term);
 
             if (tables.length > 0) {

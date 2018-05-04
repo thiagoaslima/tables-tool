@@ -8,7 +8,7 @@
     "start": "npx http-server ../dist -ssl -o -c -1",
     "w": "gulp watch",
     "build": "gulp build",
-    "test": "npx wdio wdio.conf.js"
+    "test": "npx wdio --watch wdio.conf.js"
   },
   "keywords": [],
   "author": "",
@@ -19,6 +19,7 @@
   },
   "devDependencies": {
     "@types/es6-shim": "^0.31.36",
+    "@types/jasmine": "^2.8.7",
     "@types/node": "^10.0.0",
     "babel-core": "^6.26.0",
     "babel-plugin-transform-custom-element-classes": "^0.1.0",

@@ -7,6 +7,43 @@ enum attributes {
   tableId = 'tableId'
 }
 export class SidraResearchElement extends HTMLElement {
+
+  private _dom = {} as {
+    researchTitle: Element
+  }
+
+  constructor() {
+    super();
+    this._createDOMBase();
+  }
+
+  /*** DOM MANIPULATION METHODS ***/
+
+  private _createDOMBase() {
+    if (this._hasInnerTemplate()) {
+      return this._convertInnerTemplate();
+    }
+
+    const researchTitle = document.createElement('h3');
+    researchTitle.className = 'sidra-research__research-title';
+    this._dom.researchTitle = researchTitle;
+    this.appendChild(this._dom.researchTitle);
+  }
+
+  private _convertInnerTemplate() {
+    const template = this.querySelector('template');
+    
+    const researchTitle = template.querySelector('[research-title]') || document.createElement('h3');
+    researchTitle.className = researchTitle.className + ' sidra-research__research-title';
+    this._dom.researchTitle = researchTitle;
+  }
+
+  private _hasInnerTemplate() {
+    return this.querySelector('template');
+  }
+
+
+  /*
   private _internalResearch: SidraResearch;
   private _research: SidraResearch;
   private _filterText: string;
@@ -160,6 +197,7 @@ export class SidraResearchElement extends HTMLElement {
   private manageTablesDOM(oldValue, newValue) {
 
   }
+  */
 
 }
 
