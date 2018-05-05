@@ -112,6 +112,7 @@ typings
 
 ### VisualStudioCode ###
 .vscode/*
+.vscode/symbols.json
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
