@@ -1,6 +1,6 @@
 import { latinize } from "../helpers/latinize";
 import { ISidraResearch } from "./SidraResearch.interface";
-
+ 
 export class SidraResearch implements ISidraResearch.Instance {
     static convert(params: {
         id: string,

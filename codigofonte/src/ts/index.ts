@@ -2,12 +2,12 @@ import { elementsDefine } from "./helpers/elements-define";
 import { sidraService } from "./services/SidraService";
 import { SidraResearchElement } from  './sidraResearch/sidra-research.element';
 
-elementsDefine('sidra-research', SidraResearchElement);
-
-sidraService.getListPesquisas().then(pesquisas => {
-  const pesquisa = pesquisas[0];
-  document.querySelector('sidra-research').setAttribute('item', JSON.stringify(pesquisa));
-});
+const _el = new SidraResearchElement()
+// sidraService.getListPesquisas().then(pesquisas => {
+  // const pesquisa = pesquisas[0];
+  const el = document.querySelector('sidra-research');
+  // el.setAttribute('item', JSON.stringify(pesquisa));
+// });
 /*
 class AppDrawer extends HTMLElement {
 

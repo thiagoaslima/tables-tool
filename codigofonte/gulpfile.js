@@ -41,12 +41,14 @@ gulp.task('copy-static', function () {
 
 gulp.task('copy-polyfills', function () {
     return gulp.src([
-        "./node_modules/es5-shim/es5-shim.min.js",
-        "./node_modules/es6-shim/es6-shim.min.js",
-        "./src/polyfills/*"
+        "./node_modules/core-js/client/shim.min.js",
+        "./node_modules/document-register-element/build/document-register-element.js",
+        "./src/polyfills/CustomEvents.js"
     ])
+        .pipe(debug())
         .pipe(concat('polyfills.js'))
         .pipe(uglify())
+        .pipe(cachebust.resources())
         .pipe(gulp.dest('../dist/js/'))
 })
 
@@ -59,7 +61,7 @@ gulp.task('copy-js', function () {
 gulp.task('ts->es6', function () {
     return gulp.src(['src/ts/**/*.ts', '!node_modules/**/*'])
         .pipe(debug())
-        .pipe(sourcemaps.init({loadMaps: true}))
+        .pipe(sourcemaps.init({ loadMaps: true }))
         .pipe(tsProject())
         .pipe(sourcemaps.write('.', { sourceRoot: './', includeContent: false }))
         .pipe(gulp.dest("src/es6/"));
@@ -72,13 +74,15 @@ gulp.task('es6->js', function () {
     })
         .transform(babelify.configure({
             plugins: [
+                "transform-class-properties",
+                ['transform-es2015-classes', {loose: true}],
                 "transform-custom-element-classes"
             ],
             presets: [
                 ["env", {
                     "targets": {
                         "browsers": [
-                            "last 1 versions"
+                            "last 3 versions"
                         ]
                     }
                 }]
@@ -89,7 +93,7 @@ gulp.task('es6->js', function () {
         .bundle()
         .pipe(source('index.js'))
         .pipe(buffer())
-        .pipe(sourcemaps.init({loadMaps: true}))
+        .pipe(sourcemaps.init({ loadMaps: true }))
         // .pipe(uglify())
         .pipe(sourcemaps.write('.', { sourceRoot: './', includeContent: false }))
         .pipe(gulp.dest('src/js-format'))

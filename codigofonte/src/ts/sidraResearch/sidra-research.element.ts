@@ -1,5 +1,6 @@
 import { elementsDefine } from "../helpers/elements-define";
 import { SidraResearch } from "./index";
+import { TemplateHack } from "../helpers/template-hack";
 
 enum attributes {
   item = 'item',
@@ -11,11 +12,14 @@ export class SidraResearchElement extends HTMLElement {
   private _dom = {} as {
     researchTitle: Element
   }
-
+ 
   constructor() {
     super();
+    debugger;
+    console.log('ctor2');
     this._createDOMBase();
-  }
+    console.log('ctor2');
+  } 
 
   /*** DOM MANIPULATION METHODS ***/
 
@@ -25,21 +29,25 @@ export class SidraResearchElement extends HTMLElement {
     }
 
     const researchTitle = document.createElement('h3');
+    researchTitle.setAttribute('research-title', '');
     researchTitle.className = 'sidra-research__research-title';
     this._dom.researchTitle = researchTitle;
     this.appendChild(this._dom.researchTitle);
   }
-
+ 
   private _convertInnerTemplate() {
-    const template = this.querySelector('template');
-    
-    const researchTitle = template.querySelector('[research-title]') || document.createElement('h3');
+    const templateEl = this.querySelector('[template]');
+    debugger;
+    const researchTitle = templateEl.querySelector('[research-title]') || document.createElement('h3');
+    console.log('t', templateEl);
     researchTitle.className = researchTitle.className + ' sidra-research__research-title';
     this._dom.researchTitle = researchTitle;
+    this.appendChild(this._dom.researchTitle);
+    templateEl.parentElement.removeChild(templateEl);
   }
 
   private _hasInnerTemplate() {
-    return this.querySelector('template');
+    return this.querySelector('[template]');
   }
 
 
@@ -201,3 +209,6 @@ export class SidraResearchElement extends HTMLElement {
 
 }
 
+debugger;
+TemplateHack.registerCustomElement('sidra-research');
+customElements.define('sidra-research', SidraResearchElement);
