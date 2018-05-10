@@ -1,8 +1,6 @@
-import { elementsDefine } from "./helpers/elements-define";
 import { sidraService } from "./services/SidraService";
-import { SidraResearchElement } from  './sidraResearch/sidra-research.element';
+import './sidraResearch/sidra-research.element';
 
-const _el = new SidraResearchElement()
 // sidraService.getListPesquisas().then(pesquisas => {
   // const pesquisa = pesquisas[0];
   const el = document.querySelector('sidra-research');

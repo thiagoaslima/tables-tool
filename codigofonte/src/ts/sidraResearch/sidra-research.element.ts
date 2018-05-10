@@ -1,45 +1,73 @@
-import { elementsDefine } from "../helpers/elements-define";
 import { SidraResearch } from "./index";
-import { TemplateHack } from "../helpers/template-hack";
 
 enum attributes {
   item = 'item',
   filterText = 'filterText',
   tableId = 'tableId'
 }
+
+enum events {
+  domInitialized = 'dom-initialized'
+}
 export class SidraResearchElement extends HTMLElement {
 
-  private _dom = {} as {
-    researchTitle: Element
+  static get observedAttributes() {
+    return ['title'];
   }
- 
+
+  private _dom = {
+    ready: false,
+    _template: `
+    <h3 research-title></h3>
+    <ul reserach-list></ul>
+    `,
+  } as Partial<{
+    ready: boolean
+    _template: string
+    researchTitle: Element
+  }>
+
+  public title = '';
+
   constructor() {
     super();
-    debugger;
-    console.log('ctor2');
+    this.addEventListener(events.domInitialized, () => this._updateAttributes())
+  }
+
+  connectedCallback() {
     this._createDOMBase();
-    console.log('ctor2');
-  } 
+    this._dom.ready = true;
+    this.dispatchEvent(new CustomEvent(events.domInitialized));
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (oldValue !== newValue) {
+      switch (name) {
+        case 'title':
+          this.title = newValue;
+          this._updateResearchTitle(newValue);
+      }
+    }
+  }
 
   /*** DOM MANIPULATION METHODS ***/
 
   private _createDOMBase() {
+    let div = document.createElement('div');
+    div.innerHTML = this._dom._template;
+
+    let template = div;
+
     if (this._hasInnerTemplate()) {
-      return this._convertInnerTemplate();
+      template = this.querySelector('[template]');
     }
 
-    const researchTitle = document.createElement('h3');
-    researchTitle.setAttribute('research-title', '');
-    researchTitle.className = 'sidra-research__research-title';
-    this._dom.researchTitle = researchTitle;
-    this.appendChild(this._dom.researchTitle);
+    this._convertTemplate(template);
   }
- 
-  private _convertInnerTemplate() {
-    const templateEl = this.querySelector('[template]');
-    debugger;
+
+  private _convertTemplate(templateEl: HTMLElement) {
     const researchTitle = templateEl.querySelector('[research-title]') || document.createElement('h3');
-    console.log('t', templateEl);
+
     researchTitle.className = researchTitle.className + ' sidra-research__research-title';
     this._dom.researchTitle = researchTitle;
     this.appendChild(this._dom.researchTitle);
@@ -50,6 +78,18 @@ export class SidraResearchElement extends HTMLElement {
     return this.querySelector('[template]');
   }
 
+  private _updateAttributes() {
+    this._updateResearchTitle(this.title);
+  }
+
+  private _updateResearchTitle(newValue = '') {
+    if (!this._dom.researchTitle) {
+      return;
+    }
+    if (this._dom.researchTitle.textContent !== newValue) {
+      this._dom.researchTitle.textContent = newValue;
+    }
+  }
 
   /*
   private _internalResearch: SidraResearch;
@@ -208,7 +248,4 @@ export class SidraResearchElement extends HTMLElement {
   */
 
 }
-
-debugger;
-TemplateHack.registerCustomElement('sidra-research');
 customElements.define('sidra-research', SidraResearchElement);
