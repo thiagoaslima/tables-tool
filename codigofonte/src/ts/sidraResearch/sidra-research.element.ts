@@ -1,4 +1,5 @@
 import { SidraResearch } from "./index";
+import { HTMLCustomElement } from "../helpers/HTMLCustomElement";
 
 enum attributes {
   item = 'item',
@@ -9,10 +10,10 @@ enum attributes {
 enum events {
   domInitialized = 'dom-initialized'
 }
-export class SidraResearchElement extends HTMLElement {
+export class SidraResearchElement extends HTMLCustomElement {
 
   static get observedAttributes() {
-    return ['title'];
+    return ['research-title'];
   }
 
   private _dom = {
@@ -27,10 +28,9 @@ export class SidraResearchElement extends HTMLElement {
     researchTitle: Element
   }>
 
-  public title = '';
+  public researchTitle = '';
 
-  constructor() {
-    super();
+  init() {
     this.addEventListener(events.domInitialized, () => this._updateAttributes())
   }
 
@@ -43,8 +43,8 @@ export class SidraResearchElement extends HTMLElement {
   attributeChangedCallback(name, oldValue, newValue) {
     if (oldValue !== newValue) {
       switch (name) {
-        case 'title':
-          this.title = newValue;
+        case 'research-title':
+          this.researchTitle = newValue;
           this._updateResearchTitle(newValue);
       }
     }
@@ -79,11 +79,11 @@ export class SidraResearchElement extends HTMLElement {
   }
 
   private _updateAttributes() {
-    this._updateResearchTitle(this.title);
+    this._updateResearchTitle(this.researchTitle);
   }
 
   private _updateResearchTitle(newValue = '') {
-    if (!this._dom.researchTitle) {
+    if (!this._dom || !this._dom.researchTitle) {
       return;
     }
     if (this._dom.researchTitle.textContent !== newValue) {
