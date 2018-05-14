@@ -1,15 +1,13 @@
 import { sidraService } from "./services/SidraService";
 import './sidraResearch/sidra-research.element';
 
-//@ts-ignore
-installCE(global, {
-  type: 'auto',
-  noBuiltIn: true
-});
-
 // sidraService.getListPesquisas().then(pesquisas => {
   // const pesquisa = pesquisas[0];
   const el = document.querySelector('sidra-research');
+
+  setTimeout(() => {
+    el.setAttribute('research-title', 'Alterado!!!')
+  }, 1000)
   // el.setAttribute('item', JSON.stringify(pesquisa));
 // });
 /*

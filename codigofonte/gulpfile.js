@@ -41,9 +41,14 @@ gulp.task('copy-static', function () {
 
 gulp.task('copy-polyfills', function () {
     return gulp.src([
-        "./node_modules/core-js/client/shim.min.js",
+        "./node_modules/core-js/client/shim.js",
+        "./src/polyfills/CustomEvents.js",
+        "./node_modules/@webcomponents/template/template.js",
         "./node_modules/document-register-element/build/document-register-element.js",
-        "./src/polyfills/CustomEvents.js"
+        "./node_modules/@webcomponents/shadydom/shadydom.js",
+        "./node_modules/@webcomponents/shadycss/apply-shim.js",
+        "./node_modules/@webcomponents/shadycss/scoping-shim.js",
+
     ])
         .pipe(debug())
         .pipe(concat('polyfills.js'))

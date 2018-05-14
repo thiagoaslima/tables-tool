@@ -2,13 +2,11 @@ import { SidraResearch } from "./index";
 import { HTMLCustomElement } from "../helpers/HTMLCustomElement";
 
 enum attributes {
-  item = 'item',
-  filterText = 'filterText',
-  tableId = 'tableId'
+  title = 'research-title'
 }
 
 enum events {
-  domInitialized = 'dom-initialized'
+  domInitialized = 'sidra-research-dom-initialized'
 }
 export class SidraResearchElement extends HTMLCustomElement {
 
@@ -22,19 +20,27 @@ export class SidraResearchElement extends HTMLCustomElement {
     <h3 research-title></h3>
     <ul reserach-list></ul>
     `,
+    elements: {}
   } as Partial<{
     ready: boolean
     _template: string
-    researchTitle: Element
+    elements: {
+      shadowRoot: ShadowRoot,
+      researchTitle: Element
+    }
   }>
 
   public researchTitle = '';
 
-  init() {
+  constructor() {
+    //@ts-ignore
+    super();
+    this._dom.elements.shadowRoot = this.attachShadow({ mode: 'open' });
     this.addEventListener(events.domInitialized, () => this._updateAttributes())
   }
 
   connectedCallback() {
+    debugger;
     this._createDOMBase();
     this._dom.ready = true;
     this.dispatchEvent(new CustomEvent(events.domInitialized));
@@ -43,7 +49,7 @@ export class SidraResearchElement extends HTMLCustomElement {
   attributeChangedCallback(name, oldValue, newValue) {
     if (oldValue !== newValue) {
       switch (name) {
-        case 'research-title':
+        case attributes.title:
           this.researchTitle = newValue;
           this._updateResearchTitle(newValue);
       }
@@ -56,26 +62,32 @@ export class SidraResearchElement extends HTMLCustomElement {
     let div = document.createElement('div');
     div.innerHTML = this._dom._template;
 
-    let template = div;
+    let template: Element = div;
 
     if (this._hasInnerTemplate()) {
-      template = this.querySelector('[template]');
+      template = this.querySelector('template') ;
     }
 
     this._convertTemplate(template);
   }
 
-  private _convertTemplate(templateEl: HTMLElement) {
-    const researchTitle = templateEl.querySelector('[research-title]') || document.createElement('h3');
+  private _convertTemplate(templateEl: Element | HTMLTemplateElement) {
+    let researchTitle;
 
-    researchTitle.className = researchTitle.className + ' sidra-research__research-title';
-    this._dom.researchTitle = researchTitle;
-    this.appendChild(this._dom.researchTitle);
+    if ((<HTMLTemplateElement>templateEl).content) {
+      researchTitle = (<HTMLTemplateElement>templateEl).content.querySelector('[research-title]');
+    } else {
+      researchTitle = templateEl.querySelector('[research-title]');
+    }
+    
+    researchTitle.className = researchTitle.className;
+    this._dom.elements.researchTitle = researchTitle;
+    this._dom.elements.shadowRoot.appendChild(this._dom.elements.researchTitle);
     templateEl.parentElement.removeChild(templateEl);
   }
 
   private _hasInnerTemplate() {
-    return this.querySelector('[template]');
+    return this.querySelector('template');
   }
 
   private _updateAttributes() {
@@ -83,11 +95,11 @@ export class SidraResearchElement extends HTMLCustomElement {
   }
 
   private _updateResearchTitle(newValue = '') {
-    if (!this._dom || !this._dom.researchTitle) {
+    if (!this._dom.elements.researchTitle) {
       return;
     }
-    if (this._dom.researchTitle.textContent !== newValue) {
-      this._dom.researchTitle.textContent = newValue;
+    if (this._dom.elements.researchTitle.textContent !== newValue) {
+      this._dom.elements.researchTitle.textContent = newValue;
     }
   }
 

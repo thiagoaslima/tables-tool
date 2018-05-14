@@ -14,6 +14,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@webcomponents/shadycss": "^1.2.1",
+    "@webcomponents/shadydom": "^1.0.14",
+    "@webcomponents/template": "^1.2.4",
     "core-js": "^2.5.6",
     "document-register-element": "^1.8.1",
     "es5-shim": "^4.5.10",
